@@ -13,7 +13,7 @@ class CustomModule(nn.Module):
         return None
 
     def cost(self, *args):
-        return len(self.eq_string(*args))
+        return float(len(self.eq_string(*args)))
 
 
 
