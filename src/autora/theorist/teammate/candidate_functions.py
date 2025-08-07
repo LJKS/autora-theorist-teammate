@@ -19,16 +19,16 @@ class CustomModule(nn.Module):
 
 class Plus(CustomModule):               
     def forward(self, a, b):
-        out = a + b
+        out = torch.add(a, b)
         return out
     
     def eq_string(self, stringA, stringB):
         return f"{stringA}+{stringB}"
     
 
-class Minus(CustomModule):               
+class Subtract(CustomModule):               
     def forward(self, a, b):
-        out = a - b
+        out = torch.subtract(a, b)
         return out
     
     def eq_string(self, stringA, stringB):
@@ -38,7 +38,7 @@ class Minus(CustomModule):
 
 class Mult(CustomModule):
     def forward(self, a, b):
-        out = a * b
+        out = torch.multiply(a,b)
         return out
     
     def eq_string(self, stringA, stringB):
@@ -48,7 +48,7 @@ class Mult(CustomModule):
 
 class Div(CustomModule):               
     def forward(self, a, b):
-        out = a / b
+        out = torch.divide(a, b)
         return out
     
     def eq_string(self, stringA, stringB):
@@ -60,7 +60,7 @@ class Ln(CustomModule):
         super().__init__()
                
     def forward(self, a):
-        out = np.ln(a)
+        out = torch.log(a)
         return out
     
     def eq_string(self, stringA):
@@ -71,7 +71,7 @@ class Exp(CustomModule):
         super().__init__()
                
     def forward(self, a):
-        out = np.exp(a)
+        out = torch.exp(a)
         return out
     
     def eq_string(self, stringA):
@@ -82,7 +82,7 @@ class Exp(CustomModule):
 
 dict_mate = {
     "plus": lambda : Plus(),
-    "minus": lambda : Minus(),
+    "minus": lambda : Subtract(),
     "mult": lambda : Mult(),
     "div": lambda : Div(),
     "ln": lambda: Ln(),
