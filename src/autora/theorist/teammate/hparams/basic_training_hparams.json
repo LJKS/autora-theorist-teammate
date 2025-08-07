@@ -1,0 +1,5 @@
+{
+  "learning_rate_gates": 0.001,
+  "learning_rate_weights": 0.001,
+  "epochs": 100
+}

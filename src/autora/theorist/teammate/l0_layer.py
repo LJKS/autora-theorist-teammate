@@ -14,8 +14,8 @@ class LZeroGate(nn.Module):
     def __init__(self, shape, gamma=0.1, zeta=1.1, temperature=0.4):
         super().__init__()
         self.shape = shape
-        self.gamma = -0.1
-        self.zeta = 1.1
+        self.gamma = gamma
+        self.zeta = zeta
         self.temperature = temperature
         self.log_alpha = nn.Parameter(torch.zeros(*shape))
         self.beta = self.temperature
