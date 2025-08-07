@@ -38,7 +38,7 @@ class SearchNode(nn.Module):
     def node_sampling_strategies(self, key):
         sampling_strategies = {'all': self.sampling_strategy_all_nodes,
                                'expected': self.sampling_strategy_expected_nodes,
-                               'probably_gates_only': lambda: self.sampling_strategy_expected_nodes(cutoff=0.9)}
+                               'probable_gates_only': lambda: self.sampling_strategy_expected_nodes(cutoff=0.9)}
 
         #returns an iterator over own subnodes
         if key in sampling_strategies:
