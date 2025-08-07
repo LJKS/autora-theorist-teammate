@@ -104,6 +104,20 @@ class Pow(CustomModule):
     
     def eq_string(self, stringA):
         return f"{stringA}^{self.stringValue}"
+    
+
+    class AX(CustomModule):
+        def __init__(self, value):
+            super().__init__()
+            self.value = torch.tensor(value, dtype=torch.float32)
+            self.stringValue = str(round(self.value.item(), 1))  
+
+        def forward(self, a):
+            out = torch.multiply(self.value, a)
+            return out
+        
+        def eq_string(self, stringA):
+            return f"{self.value}{stringA}"
 
 
 
