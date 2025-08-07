@@ -88,7 +88,7 @@ class Constant(CustomModule):
         return out
     
     def eq_string(self, stringValue):
-        return f"{stringValue}"
+        return f"{round(stringValue, 1)}"
     
 
 class Pow(CustomModule):
