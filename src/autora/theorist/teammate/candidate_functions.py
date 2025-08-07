@@ -75,8 +75,34 @@ class Exp(CustomModule):
         return out
     
     def eq_string(self, stringA):
-        return f"exp{stringA}"
+        return f"exp{stringA}"    
+
+
+class Constant(CustomModule):
+    def __init__(self, value):
+        super().__init__()
+        self.value = torch.tensor(value, dtype=torch.float32)
+               
+    def forward(self):
+        out = self.value
+        return out
     
+    def eq_string(self, stringValue):
+        return f"{stringValue}"
+    
+
+class Pow(CustomModule):
+    def __init__(self, value):
+        super().__init__()
+        self.value = torch.tensor(value, dtype=torch.float32)
+        self.stringValue = str(self.value)  
+
+    def forward(self, a):
+        out = torch.pow(a, self.value)
+        return out
+    
+    def eq_string(self, stringA):
+        return f"{stringA}^{self.stringValue}"
 
 
 
@@ -87,7 +113,11 @@ dict_mate = {
     "div": lambda : Div(),
     "ln": lambda: Ln(),
     "exp": lambda: Exp(),
+    "const": lambda: Constant(),
+    "pow": lambda: Pow()
     }
+
+
 
 
 '''
