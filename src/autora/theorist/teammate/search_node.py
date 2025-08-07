@@ -3,8 +3,10 @@ from torch import nn
 import l0_layer
 
 COMPONENT_DICT = {}
+
 REDUCE_OPS = {'sum': lambda x: torch.sum(x, dim=1)}
 REDUCE_OPS_NOTATION = {'sum': '+'}
+
 class SearchNode(nn.Module):
     def __init__(self, components: list, reduce_op='sum'):
         '''
@@ -22,7 +24,7 @@ class SearchNode(nn.Module):
         self.reduce_op_notation = REDUCE_OPS_NOTATION[reduce_op]
 
 
-    def forward(self, independent_variables, gate_activated=True, test=False):
+    def forward(self, independent_variables):
         """
         Forward pass through the search node, applying each component in parallel
         args:
@@ -33,4 +35,43 @@ class SearchNode(nn.Module):
         output = self.reduce_op(weighted_component_results)
         return output
 
-    def to_equation(self):
+    def node_sampling_strategies(self, key):
+        sampling_strategies = {}
+        #returns an iterator over own subnodes
+        return sampling_strategies[key] if key in sampling_strategies else raise ValueError(f"Invalid node sampling strategy: {key}. Available strategies: {list(sampling_strategies.keys())}")
+
+    def to_equation(self, node_sampling: str, use_outer_brackets: bool = False) -> str:
+        """
+        Convert the search node to a string representation of an equation
+        args:
+            node_sampling: string, in self.node_sampling_strategies
+            use_outer_brackets: whether to use outer brackets in the equation
+        """
+        node_sampling = self.node_sampling_strategies(node_sampling)
+        equation = ''
+        for node in node_sampling:
+            if isinstance(node, SearchNode):
+                added_string = node.to_equation(node_sampling, use_outer_brackets=True)
+                if not added_string == '':
+                    equation += added_string
+                    equation += self.reduce_op_notation
+            else:
+                equation += node.eq_string()
+                equation += self.reduce_op_notation
+
+        if len(equation) > 0:
+            equation = equation[:-1]  # Remove the last operator
+        if use_outer_brackets:
+            equation = f'({equation})'
+        return equation
+
+    def test_run(self, independent_variables, node_sampling: str):
+        """
+        Test run of the search node
+        args:
+            node_sampling: string, in self.node_sampling_strategies
+            independent_variables: input data (batched) to be processed by the equation components
+        """
+        node_sampling = self.node_sampling_strategies(node_sampling)
+        output = self.forward(independent_variables)
+        return output, self.to_equation(node_sampling)
