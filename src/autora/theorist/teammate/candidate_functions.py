@@ -82,6 +82,7 @@ class Constant(CustomModule):
     def __init__(self, value):
         super().__init__()
         self.value = torch.tensor(value, dtype=torch.float32)
+        self.stringValue = str(round(self.value.item(), 1))
                
     def forward(self):
         out = self.value
@@ -95,7 +96,7 @@ class Pow(CustomModule):
     def __init__(self, value):
         super().__init__()
         self.value = torch.tensor(value, dtype=torch.float32)
-        self.stringValue = str(self.value)  
+        self.stringValue = str(round(self.value.item(), 1))  
 
     def forward(self, a):
         out = torch.pow(a, self.value)
