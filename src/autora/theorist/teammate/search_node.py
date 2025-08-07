@@ -36,9 +36,27 @@ class SearchNode(nn.Module):
         return output
 
     def node_sampling_strategies(self, key):
-        sampling_strategies = {}
+        sampling_strategies = {'all': self.sampling_strategy_all_nodes,
+                               'expected': self.sampling_strategy_expected_nodes,
+                               'probably_gates_only': lambda: self.sampling_strategy_expected_nodes(cutoff=0.9)}
+
         #returns an iterator over own subnodes
         return sampling_strategies[key] if key in sampling_strategies else raise ValueError(f"Invalid node sampling strategy: {key}. Available strategies: {list(sampling_strategies.keys())}")
+
+    def sampling_strategy_all_nodes(self):
+        """
+        Returns a list of all nodes in the search node
+        """
+        return self.components
+
+    def sampling_strategy_expected_nodes(self, cutoff=0.5):
+        """
+        Returns a list of nodes that are expected to be activated based on the gate probabilities
+        """
+        open_gate_probabilities = self.gates.open_gate_probability()
+        open_gate_probabilities = torch.squeeze(open_gate_probabilities).numpy().tolist()
+        chosen_nodes = [node for node, prob in zip(self.components, open_gate_probabilities) if prob >= cutoff]
+        return chosen_nodes
 
     def to_equation(self, node_sampling: str, use_outer_brackets: bool = False) -> str:
         """
@@ -75,3 +93,17 @@ class SearchNode(nn.Module):
         node_sampling = self.node_sampling_strategies(node_sampling)
         output = self.forward(independent_variables)
         return output, self.to_equation(node_sampling)
+
+    def regularization_cost(self):
+        gate_probs = self.gates.open_gate_probability()
+        gate_probs = torch.squeeze(gate_probs)
+        #start with torch zero scalar
+        cost_total = torch.zeros((), device=gate_probs.device)
+        for i, component in enumerate(self.components):
+            if isinstance(component, SearchNode):
+                costs = component.regularization_cost()
+                cost_total += gate_probs[i] * costs
+            else:
+                costs = component.cost()
+                cost_total += gate_probs[i] * costs
+        return cost_total
