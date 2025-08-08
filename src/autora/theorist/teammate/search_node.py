@@ -41,7 +41,11 @@ class SearchNode(nn.Module):
                                'probable_gates_only': lambda: self.sampling_strategy_expected_nodes(cutoff=0.9)}
 
         #returns an iterator over own subnodes
-        return sampling_strategies[key] if key in sampling_strategies else raise ValueError(f"Invalid node sampling strategy: {key}. Available strategies: {list(sampling_strategies.keys())}")
+        if key in sampling_strategies:
+            return sampling_strategies[key]
+        else:
+            raise ValueError(
+                f"Invalid node sampling strategy: {key}. Available strategies: {list(sampling_strategies.keys())}")
 
     def sampling_strategy_all_nodes(self):
         """
