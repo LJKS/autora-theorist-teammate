@@ -3,5 +3,6 @@
   "learning_rate_weights": 0.001,
   "sup_epochs_gates": 1,
   "sup_epochs_params": 1,
-  "meta_epochs": 100
+  "meta_epochs": 100,
+  "batch_size": 32,
 }
