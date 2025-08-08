@@ -3,7 +3,6 @@ from torch import nn
 import l0_layer
 
 COMPONENT_DICT = {}
-
 REDUCE_OPS = {'sum': lambda x: torch.sum(x, dim=1)}
 REDUCE_OPS_NOTATION = {'sum': '+'}
 

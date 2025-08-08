@@ -6,8 +6,9 @@ from torch import nn
 
 
 class CustomModule(nn.Module):
-    def __init__(self):
+    def __init__(self, referenced_independent_variables: list = []):
         super().__init__()
+        self.referenced_independent_variables = referenced_independent_variables
     
     def eq_string(self):
         return None
@@ -17,9 +18,13 @@ class CustomModule(nn.Module):
 
 
 
-class Plus(CustomModule):               
-    def forward(self, a, b):
-        out = torch.add(a, b)
+class Plus(CustomModule):
+
+    def forward(self, independent_variables):
+        assert len(self.referenced_independent_variables) == 2, "Plus operation requires exactly two independent variables."
+        arg_1 = independent_variables[self.referenced_independent_variables[0]]
+        arg_2 = independent_variables[self.referenced_independent_variables[1]]
+        out = torch.add(arg_1, arg_2)
         return out
     
     def eq_string(self, stringA, stringB):
@@ -27,8 +32,11 @@ class Plus(CustomModule):
     
 
 class Subtract(CustomModule):               
-    def forward(self, a, b):
-        out = torch.subtract(a, b)
+    def forward(self, independent_variables):
+        assert len(self.referenced_independent_variables) == 2, "Subtract operation requires exactly two independent variables."
+        arg_1 = independent_variables[self.referenced_independent_variables[0]]
+        arg_2 = independent_variables[self.referenced_independent_variables[1]]
+        out = torch.subtract(arg_1, arg_2)
         return out
     
     def eq_string(self, stringA, stringB):
@@ -117,29 +125,3 @@ dict_mate = {
     "const": lambda: Constant(),
     "pow": lambda: Pow()
     }
-
-
-
-
-'''
-# Testblock
-
-def test_exp_module():
-    model = Exp()
-    
-    # Test 1: forward() funktioniert
-    a = np.array([0.0, 1.0, 2.0])
-    b = np.array([0.0, 1.0, 2.0])
-    
-    print("Forward output:", model.forward(a))  # Erwartet: [1.0, e^1, e^2]
-
-    # Test 2: eq_string() funktioniert
-    print("eq_string output:", model.eq_string("x"))  # Erwartet: "expx"
-
-    # Test 3: cost() verwendet eq_string korrekt
-    print("Cost output:", model.cost("x"))  # Erwartet: Länge von "expx" → 4
-
-    # Test 4: isinstance
-    print("Ist Exp Instanz von CustomModule?", isinstance(model, CustomModule))  # Erwartet: True
-
-test_exp_module() '''
