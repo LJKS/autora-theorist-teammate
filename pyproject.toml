@@ -16,6 +16,7 @@ dependencies = [
     "autora",
     "json",
     "tqdm",
+    "torch",
 ]
 
 [project.optional-dependencies]
