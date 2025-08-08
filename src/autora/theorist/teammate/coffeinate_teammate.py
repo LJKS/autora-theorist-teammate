@@ -95,6 +95,7 @@ def bilevel_optimization(model, dataloader, hparam_file):
         print(f'Updating model parameters; Loss: {epoch_loss_params:.4f}')
         #reset running loss for gate optimization
         running_loss = 0.0
+
         #now iterate over the dataset for gate optimization
         for inputs, targets in dataloader:
             inputs, targets = inputs.to(device), targets.to(device)
