@@ -110,6 +110,7 @@ def bilevel_optimization(model, dataloader, hparam_file):
             loss.backward()
             optimizer_gates.step()
             running_loss += loss.item()
+
         epoch_loss_gates = running_loss / len(dataloader)
         print(f'Updating gate parameters; Loss: {epoch_loss_gates:.4f}')
         meta_epoch_iter.set_postfix(loss_params=epoch_loss_params, loss_gates=epoch_loss_gates)
