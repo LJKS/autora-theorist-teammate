@@ -2,13 +2,14 @@ import pandas as pd
 import numpy as np
 import torch 
 from torch import nn
-
+from utils import get_variable_name
 
 
 class CustomModule(nn.Module):
-    def __init__(self):
+    def __init__(self, var_idxs: list):
         super().__init__()
-    
+        self.var_idxs = var_idxs  # List of variable indices this module uses
+
     def eq_string(self):
         return None
 
@@ -18,43 +19,50 @@ class CustomModule(nn.Module):
 
 
 class Plus(CustomModule):               
-    def forward(self, a, b):
-        out = torch.add(a, b)
+    def forward(self, independent_variables):
+        arg_1 = independent_variables[self.var_idxs[0]]
+        arg_2 = independent_variables[self.var_idxs[1]]
+        out = torch.add(arg_1, arg_2)
         return out
     
-    def eq_string(self, stringA, stringB):
-        return f"{stringA}+{stringB}"
+    def eq_string(self):
+        return f"{get_variable_name(self.var_idxs[0])}+{get_variable_name(self.var_idxs[1])}"
     
 
 class Subtract(CustomModule):               
-    def forward(self, a, b):
-        out = torch.subtract(a, b)
+    def forward(self, independent_variables):
+        arg_1 = independent_variables[self.var_idxs[0]]
+        arg_2 = independent_variables[self.var_idxs[1]]
+        out = torch.subtract(arg_1, arg_2)
         return out
-    
-    def eq_string(self, stringA, stringB):
-        return f"{stringA}-{stringB}"
+
+    def eq_string(self):
+        return f"{get_variable_name(self.var_idxs[0])}-{get_variable_name(self.var_idxs[1])}"
 
 
 
 class Mult(CustomModule):
-    def forward(self, a, b):
-        out = torch.multiply(a,b)
+    def forward(self, independent_variables):
+        arg_1 = independent_variables[self.var_idxs[0]]
+        arg_2 = independent_variables[self.var_idxs[1]]
+        out = torch.multiply(arg_1, arg_2)
         return out
-    
-    def eq_string(self, stringA, stringB):
-        return f"{stringA}*{stringB}"
+    def eq_string(self):
+        return f"{get_variable_name(self.var_idxs[0])}*{get_variable_name(self.var_idxs[1])}"
 
 
 
 class Div(CustomModule):               
-    def forward(self, a, b):
-        out = torch.divide(a, b)
+    def forward(self, independent_variables):
+        arg_1 = independent_variables[self.var_idxs[0]]
+        arg_2 = independent_variables[self.var_idxs[1]]
+        out = torch.divide(arg_1, arg_2)
         return out
     
-    def eq_string(self, stringA, stringB):
-        return f"{stringA}/{stringB}"
+    def eq_string(self):
+        return f"{get_variable_name(self.var_idxs[0])}/{get_variable_name(self.var_idxs[1])}"
     
-
+"""
 class Ln(CustomModule):
     def __init__(self):
         super().__init__()
@@ -143,3 +151,4 @@ def test_exp_module():
     print("Ist Exp Instanz von CustomModule?", isinstance(model, CustomModule))  # Erwartet: True
 
 test_exp_module() '''
+"""
